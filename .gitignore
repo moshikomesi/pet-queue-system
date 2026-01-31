@@ -1,13 +1,27 @@
-# backend
+# ========================
+# Monorepo ignores
+# ========================
+
+# ---------- Backend (.NET) ----------
 Api/bin/
 Api/obj/
+**/bin/
+**/obj/
 
-# frontend
+# user secrets / config
+secrets.json
+appsettings.Development.json
+
+# ---------- Frontend (React/Vite) ----------
 Client/node_modules/
 Client/dist/
 
+# ---------- Logs ----------
+*.log
+
+# ---------- OS ----------
 .DS_Store
 
-# dotnet
-**/bin/
-**/obj/
+# ---------- IDE ----------
+.vscode/
+.idea/
