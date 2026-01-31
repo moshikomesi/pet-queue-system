@@ -1,0 +1,9 @@
+# backend
+Api/bin/
+Api/obj/
+
+# frontend
+Client/node_modules/
+Client/dist/
+
+.DS_Store
