@@ -184,7 +184,7 @@ BEGIN
     FROM dbo.Appointments
     WHERE UserId = @UserId;
 
-    IF @PastCount >= 3
+    IF @PastCount > 3
         SET @FinalPrice = @Price * 0.9;
     ELSE
         SET @FinalPrice = @Price;
@@ -201,7 +201,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE dbo.spSetAppointment
-    @AppointmentId INT,
+   @AppointmentId INT,
     @UserId INT,
     @TypeId INT,
     @ScheduledTime DATETIME
@@ -209,14 +209,30 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    UPDATE dbo.Appointments
-    SET TypeId = @TypeId,
-        ScheduledTime = @ScheduledTime
-    WHERE AppointmentId = @AppointmentId
+    DECLARE @price DECIMAL(10,2);
+    DECLARE @FinalPrice DECIMAL(10,2);
+    DECLARE @PastCount INT;
+
+
+    select @price = Price from DogTypes
+    where TypeId = @TypeId
+
+  SELECT @PastCount = COUNT(*) FROM Appointments WHERE UserId = @UserId;
+
+    IF @PastCount > 3
+        SET @FinalPrice = @Price * 0.9; -- 10% discount
+    ELSE
+        SET @FinalPrice = @Price;
+
+    UPDATE Appointments 
+    SET TypeId = @TypeId, 
+        ScheduledTime = @ScheduledTime,
+        FinalPrice = @FinalPrice
+    WHERE AppointmentId = @AppointmentId 
       AND UserId = @UserId;
 
     SELECT @@ROWCOUNT;
-END
+    END
 GO
 
 /* 5️ Delete Appointment */

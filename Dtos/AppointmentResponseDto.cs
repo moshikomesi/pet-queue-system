@@ -9,5 +9,6 @@ namespace PetQueue.Api.DTOs
         public DateTime ScheduledTime { get; set; }
         public decimal FinalPrice { get; set; }
         public int DurationMinutes { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

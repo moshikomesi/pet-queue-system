@@ -18,14 +18,14 @@ namespace PetQueue.Api.Repositories
 
         public async Task<List<AppointmentResponseDto>> GetAsync()
         {
-            const string sql = "SELECT AppointmentId, UserId, TypeId, ScheduledTime FROM Appointments ORDER BY ScheduledTime DESC";
+            const string sql = "SELECT * FROM ClientAppointments_View ORDER BY ScheduledTime DESC";
             var result = await _dbConnection.QueryAsync<AppointmentResponseDto>(sql);
             return result.ToList();
         }
 
         public async Task<List<AppointmentResponseDto>> GetAsync(int userId)
         {
-            const string sql = "SELECT AppointmentId, UserId, TypeId, ScheduledTime FROM Appointments WHERE UserId = @UserId ORDER BY ScheduledTime DESC";
+            const string sql = "SELECT * FROM ClientAppointments_View WHERE UserId = @UserId ORDER BY ScheduledTime DESC";
             var result = await _dbConnection.QueryAsync<AppointmentResponseDto>(sql, new { UserId = userId });
             return result.ToList();
         }
@@ -49,7 +49,7 @@ namespace PetQueue.Api.Repositories
 
         public async Task<List<AppointmentResponseDto>> GetAsync(string? clientName, DateTime? date)
         {
-            var sql = new StringBuilder("SELECT AppointmentId, UserId, TypeId, ScheduledTime FROM Appointments WHERE 1=1");
+            var sql = new StringBuilder("SELECT * FROM ClientAppointments_View WHERE 1=1");
             var parameters = new DynamicParameters();
 
             if (date.HasValue)
@@ -69,7 +69,7 @@ namespace PetQueue.Api.Repositories
             const string procedureName = "spDeleteAppointment";
             
             // Execute using CommandType.StoredProcedure
-            var rows = await _dbConnection.ExecuteAsync(
+            var rows = await  _dbConnection.QuerySingleAsync<int>(
                 procedureName, 
                 new { AppointmentId = appointmentId }, 
                 commandType: CommandType.StoredProcedure
@@ -80,6 +80,7 @@ namespace PetQueue.Api.Repositories
 
         public async Task<bool> UpdateAsync(int appointmentId, int userId, int typeId, DateTime scheduledTime)
         {
+            
             const string procedureName = "spSetAppointment";
 
             var parameters = new 
@@ -90,11 +91,11 @@ namespace PetQueue.Api.Repositories
                 ScheduledTime = scheduledTime 
             };
 
-            var rowsAffected = await _dbConnection.ExecuteAsync(
-                procedureName, 
-                parameters, 
-                commandType: CommandType.StoredProcedure
-            );
+        var rowsAffected = await _dbConnection.QuerySingleAsync<int>(
+            procedureName,
+            parameters,
+            commandType: CommandType.StoredProcedure
+        );
 
             return rowsAffected > 0;
         }   

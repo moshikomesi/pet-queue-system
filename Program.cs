@@ -35,6 +35,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // 3. JWT Authentication (FRESH START - CLEAN & MINIMAL)
 
+
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -124,7 +125,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -142,6 +143,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseRouting();
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
@@ -153,5 +157,6 @@ app.MapAuthEndpoints();
 app.MapAppointmentEndpoints();
 
 // 9. Run
+
 
 app.Run();

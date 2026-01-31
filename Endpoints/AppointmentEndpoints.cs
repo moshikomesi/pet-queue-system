@@ -52,7 +52,7 @@ namespace PetQueue.Api.Endpoints
                         return Results.Unauthorized();
 
                     var userId = int.Parse(userIdClaim.Value);
-                    var appointments = await service.GetAsync(userId);
+                    var appointments = await service.GetAsync();
                     return Results.Ok(appointments);
                 }
                 catch (Exception)
@@ -73,7 +73,8 @@ namespace PetQueue.Api.Endpoints
             {
                 try
                 {
-                    var userIdClaim = user.FindFirst(JwtRegisteredClaimNames.Sub);
+                    //var userIdClaim = user.FindFirst(JwtRegisteredClaimNames.Sub);
+                    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
                     if (userIdClaim is null)
                         return Results.Unauthorized();
 
@@ -120,9 +121,10 @@ namespace PetQueue.Api.Endpoints
                         ? Results.Created($"/api/appointments/{userId}", new { message = "Appointment created successfully." })
                         : Results.BadRequest(new { error = "Failed to create appointment." });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return Results.Problem("An error occurred while creating the appointment.");
+                    Console.WriteLine(ex.ToString());
+                    return Results.Problem(detail: ex.Message);
                 }
             })
             .WithName("CreateAppointment")
@@ -147,11 +149,11 @@ namespace PetQueue.Api.Endpoints
                         return Results.Unauthorized();
 
                     var userId = int.Parse(userIdClaim.Value);
-
+                    
                     var success = await service.UpdateAsync(userId, id, request);
                     return success 
                         ? Results.Ok(new { message = "Appointment updated successfully." })
-                        : Results.NotFound(new { error = "Appointment not found." });
+                        : Results.NotFound(new { error = "Appointment not found." ,success});
                 }
                 catch (UnauthorizedAccessException)
                 {

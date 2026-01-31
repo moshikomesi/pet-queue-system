@@ -16,7 +16,7 @@ namespace PetQueue.Api.Services
     public async Task<bool> CreateAsync(int userId, AppointmentCreateDto request)
     {
     // 1. Basic Validation: Ensure the appointment is for a future date
-    if (request.ScheduledTime <= DateTime.UtcNow)
+    if (request.ScheduledTime < DateTime.UtcNow)
     {
         throw new InvalidOperationException("Appointments must be scheduled for a future date.");
     }
@@ -63,9 +63,10 @@ namespace PetQueue.Api.Services
 
     public async Task<bool> UpdateAsync(int userId, int appointmentId, AppointmentCreateDto request)
     {
+
         // Fetch all appointments (filtered by the repository logic)
         var appointments = await _repository.GetAsync(null, null);
-        
+
         // Find the specific appointment from the list
         var appointment = appointments.FirstOrDefault(a => a.AppointmentId == appointmentId);
 
