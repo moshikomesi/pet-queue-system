@@ -7,3 +7,7 @@ Client/node_modules/
 Client/dist/
 
 .DS_Store
+
+# dotnet
+**/bin/
+**/obj/
